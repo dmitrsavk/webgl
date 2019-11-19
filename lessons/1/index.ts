@@ -27,6 +27,7 @@ function main() {
   // Initialize shaders
   if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
     console.log("Failed to intialize shaders.");
+    gl.uniform4fv
     return;
   }
 
@@ -38,4 +39,6 @@ function main() {
 
   // Draw a point
   gl.drawArrays(gl.POINTS, 0, 1);
+
+  gl.vertexAttrib3fv(a, new Float32Array([1.0, 1.0, 1.0]))
 }
