@@ -94,6 +94,8 @@ function main() {
 
   let start = Date.now();
 
+  let Tx = 0.5;
+
   function render() {
     now = Date.now();
 
@@ -105,6 +107,8 @@ function main() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     xformMatrix.setRotate(angle, 0, 0, 1);
+    xformMatrix.translate(Tx * diff, 0, 0);
+
     gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix.elements);
 
     gl.drawArrays(gl.TRIANGLES, 0, n);
