@@ -81,8 +81,6 @@ function main() {
   xformMatrix.setRotate(angle, 0, 0, 1);
 
   const u_xformMatrix = gl.getUniformLocation(gl.program, "u_xformMatrix");
-  gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix.elements);
-
 
   gl.clearColor(0.0, 0.0, 0.2, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -94,8 +92,14 @@ function main() {
     return;
   }
 
+  let start = Date.now();
+
   function render() {
-    angle += 5;
+    now = Date.now();
+
+    let diff = (now - start) / 1000;
+
+    angle = 360 * diff;
 
     gl.clearColor(0.0, 0.0, 0.2, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
