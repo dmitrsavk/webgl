@@ -2,17 +2,10 @@
 // Vertex shader program
 var VSHADER_SOURCE = `
 attribute vec4 a_Position;
-uniform vec4 u_Translation;
-
-uniform float u_Sin;
-uniform float u_Cos;
-uniform float u_Tx;
+uniform mat4 u_xformMatrix;
 
 void main() {
-  gl_Position.x = a_Position.x * u_Cos - a_Position.y * u_Sin + u_Tx;
-  gl_Position.y = a_Position.x * u_Sin + a_Position.y * u_Cos;
-  gl_Position.z = a_Position.z;
-  gl_Position.w = a_Position.w;
+  gl_Position = u_xformMatrix * a_Position;
 }
 `;
 
@@ -62,11 +55,6 @@ function initVertexBuffer(gl) {
 }
 
 let angle = 45.0;
-let Tx = 0.01;
-
-let sin = Math.sin((angle * Math.PI) / 180);
-
-let cos = Math.cos((angle * Math.PI) / 180);
 
 function main() {
   // Retrieve <canvas> element
@@ -89,14 +77,12 @@ function main() {
   var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
   gl.uniform4fv(u_FragColor, new Float32Array([0.0, 1.0, 0.0, 1.0]));
 
-  const u_Sin = gl.getUniformLocation(gl.program, "u_Sin");
-  gl.uniform1f(u_Sin, sin);
+  let xformMatrix = new Matrix4();
+  xformMatrix.setRotate(angle, 0, 0, 1);
 
-  const u_Cos = gl.getUniformLocation(gl.program, "u_Cos");
-  gl.uniform1f(u_Cos, cos);
+  const u_xformMatrix = gl.getUniformLocation(gl.program, "u_xformMatrix");
+  gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix.elements);
 
-  const u_Tx = gl.getUniformLocation(gl.program, "u_Tx");
-  gl.uniform1f(u_Tx, Tx);
 
   gl.clearColor(0.0, 0.0, 0.2, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -109,17 +95,13 @@ function main() {
   }
 
   function render() {
-    angle++;
-    Tx += 0.01;
-
-    if (Tx >= 1.5) Tx = -1.5;
+    angle += 5;
 
     gl.clearColor(0.0, 0.0, 0.2, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.uniform1f(u_Sin, Math.sin((angle * Math.PI) / 180));
-    gl.uniform1f(u_Cos, Math.cos((angle * Math.PI) / 180));
-    gl.uniform1f(u_Tx, Tx);
+    xformMatrix.setRotate(angle, 0, 0, 1);
+    gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix.elements);
 
     gl.drawArrays(gl.TRIANGLES, 0, n);
 
