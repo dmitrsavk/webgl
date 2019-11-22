@@ -58,7 +58,6 @@ function main() {
     gl.vertexAttrib4f();
     return;
   }
-gl.vertexAttrib4f
 
   var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
 
@@ -77,5 +76,5 @@ gl.vertexAttrib4f
     return;
   }
 
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+  gl.drawArrays(gl.LINE_LOOP, 0, n);
 }

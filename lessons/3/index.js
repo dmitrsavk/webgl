@@ -20,9 +20,11 @@ precision mediump float;
 varying vec4 v_Color;
 
 void main() {
-  gl_FragColor = v_Color;;
+  gl_FragColor = v_Color;
 }
 `;
+
+// gl_FragColor = vec4(gl_FragCoord.x / 400.0, 0.1, gl_FragCoord.y / 400.0, 1.0);
 
 function initVertexBuffer(gl) {
   const n = 3;
@@ -112,5 +114,5 @@ function main() {
     return;
   }
 
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
