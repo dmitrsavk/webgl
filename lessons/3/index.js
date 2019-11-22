@@ -29,11 +29,10 @@ void main() {
 
   float red = 1.0 - r;
 
-  gl_FragColor = vec4(red, v_Color.y, v_Color.z, v_Color.w);
+  gl_FragColor = vec4(sin(red * 1.0), v_Color.y, v_Color.z, v_Color.w);
 }
 `;
 
-// gl_FragColor = vec4((sin(u_Time) + 1.0) / 2.0, 0.0, v_Color.z, v_Color.w);
 
 function initVertexBuffer(gl) {
   const n = 3;
