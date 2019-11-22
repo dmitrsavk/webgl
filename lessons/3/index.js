@@ -19,23 +19,53 @@ var FSHADER_SOURCE = `
 precision mediump float;
 varying vec4 v_Color;
 
+uniform float u_Time;
+
 void main() {
-  gl_FragColor = v_Color;
+  float x = (gl_FragCoord.x / 400.0) * 2.0 - 1.0;
+  float y = (gl_FragCoord.y / 400.0) * 2.0 - 1.0;
+
+  float r = sqrt(x * x + y * y);
+
+  float red = 1.0 - r;
+
+  gl_FragColor = vec4(red, v_Color.y, v_Color.z, v_Color.w);
 }
 `;
 
-// gl_FragColor = vec4(gl_FragCoord.x / 400.0, 0.1, gl_FragCoord.y / 400.0, 1.0);
+// gl_FragColor = vec4((sin(u_Time) + 1.0) / 2.0, 0.0, v_Color.z, v_Color.w);
 
 function initVertexBuffer(gl) {
   const n = 3;
 
   const verticesSizes = new Float32Array([
-    -0.5, -0.5, 2.0, 1.0, 0.0, 0.0, //
-    0.0, 0.5, 4.0, 0.0, 1.0, 0.0, //
-    0.5, -0.5, 6.0, 0.0, 0.0, 1.0, //
+    -1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0, //
+    -1.0,
+    -1.0,
+    4.0,
+    1.0,
+    0.0,
+    0.0, //
+    1.0,
+    1.0,
+    6.0,
+    1.0,
+    0.0,
+    0.0, //
+    1.0,
+    -1.0,
+    6.0,
+    1.0,
+    0.0,
+    0.0
   ]);
 
-  const FSIZE = verticesSizes.BYTES_PER_ELEMENT;;
+  const FSIZE = verticesSizes.BYTES_PER_ELEMENT;
 
   const vertexBuffer = gl.createBuffer();
 
@@ -64,7 +94,14 @@ function initVertexBuffer(gl) {
     return;
   }
 
-  gl.vertexAttribPointer(a_Point_size, 1, gl.FLOAT, false, FSIZE * 6, FSIZE * 2);
+  gl.vertexAttribPointer(
+    a_Point_size,
+    1,
+    gl.FLOAT,
+    false,
+    FSIZE * 6,
+    FSIZE * 2
+  );
   gl.enableVertexAttribArray(a_Point_size);
 
   const a_Color = gl.getAttribLocation(gl.program, "a_Color");
@@ -80,7 +117,6 @@ function initVertexBuffer(gl) {
 
   return n;
 }
-
 
 function main() {
   // Retrieve <canvas> element
@@ -100,12 +136,16 @@ function main() {
     return;
   }
 
-  var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
-  gl.uniform4fv(u_FragColor, new Float32Array([0.0, 1.0, 0.0, 1.0]));
+  //
+  const u_Time = gl.getUniformLocation(gl.program, "u_Time");
 
+  if (u_Time < 0) {
+    console.log("Failed to get the storage location of u_Time");
+    return;
+  }
 
-  gl.clearColor(0.0, 0.0, 0.2, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniform1f(u_Time, Date.now());
+  //
 
   const n = initVertexBuffer(gl);
 
@@ -114,5 +154,20 @@ function main() {
     return;
   }
 
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  function render() {
+    const time = (Date.now() % 1000) / 100;
+    gl.uniform1f(u_Time, time);
+
+    //console.log(time)
+
+    gl.clearColor(0.0, 0.0, 0.2, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    requestAnimationFrame(render);
+  }
+
+  render();
 }
