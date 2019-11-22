@@ -23,13 +23,13 @@ uniform float u_Time;
 
 void main() {
   float x = (gl_FragCoord.x / 400.0) * 2.0 - 1.0;
-  float y = (gl_FragCoord.y / 400.0) * 2.0 - 1.0;
+  float y = (gl_FragCoord.y / 400.0) * 2.0 - 2.0;
 
   float r = sqrt(x * x + y * y);
 
   float red = 1.0 - r;
 
-  gl_FragColor = vec4(sin(red * 1.0), v_Color.y, v_Color.z, v_Color.w);
+  gl_FragColor = vec4(sin(red * u_Time), v_Color.y, v_Color.z, v_Color.w);
 }
 `;
 
@@ -142,8 +142,6 @@ function main() {
     console.log("Failed to get the storage location of u_Time");
     return;
   }
-
-  gl.uniform1f(u_Time, Date.now());
   //
 
   const n = initVertexBuffer(gl);
@@ -153,12 +151,13 @@ function main() {
     return;
   }
 
+  const start = Date.now();
+
 
   function render() {
-    const time = (Date.now() % 1000) / 100;
-    gl.uniform1f(u_Time, time);
+    const now = Date.now();
 
-    //console.log(time)
+    gl.uniform1f(u_Time, (now - start) / 10);
 
     gl.clearColor(0.0, 0.0, 0.2, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
