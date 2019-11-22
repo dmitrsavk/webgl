@@ -38,7 +38,7 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Draw a point
-  gl.drawArrays(gl.POINTS, 0, 1);
+  gl.drawArrays(gl.TRIANGLES, 0, 1);
 
   gl.vertexAttrib3fv(a, new Float32Array([1.0, 1.0, 1.0]))
 }
